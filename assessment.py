@@ -1,11 +1,11 @@
 from tkinter import *
 
 root = Tk()
-root.title("Financial Toolkit")
+root.title("Income Calculator")
 root.geometry("900x600")
-root.configure(bg="#1c0333")
+root.configure(bg="#1F0954")
 
-# center window
+# Centering window (same as homepage)
 window_width = 900
 window_height = 600
 screen_width = root.winfo_screenwidth()
@@ -16,63 +16,42 @@ y = int((screen_height/2) - (window_height/2))
 
 root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-# main frame
-main_frame = Frame(root, bg="#091F92", width=600, height=400)
+# Main card (same style as homepage)
+main_frame = Frame(root, bg="#091F92", width=700, height=450)
 main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-# TEXT
-title_label = Label(main_frame, text="Financial Toolkit",
-                   font=("Arial", 26, "bold"),
-                   fg="#FFCA28", bg="#091F92")
-title_label.pack(pady=20)
+# TITLE
+title = Label(main_frame,
+              text="Income Calculator",
+              font=("Arial", 22, "bold"),
+              fg="white",
+              bg="#091F92")
+title.pack(pady=20)
 
-subtitle_label = Label(main_frame,
-                      text="Your all-in-one calculator system",
-                      font=("Arial", 14),
-                      fg="white", bg="#091F92")
-subtitle_label.pack(pady=5)
+# SUBTEXT (matches style consistency)
+subtitle = Label(main_frame,
+                 text="Enter your income details below",
+                 font=("Arial", 12),
+                 fg="white",
+                 bg="#091F92")
+subtitle.pack(pady=5)
 
-instruction_label = Label(main_frame,
-                         text="Choose your calculator:",
-                         font=("Arial", 11),
-                         fg="white", bg="#091F92")
-instruction_label.pack(pady=10)
+# Placeholder layout rows (no inputs yet)
+row1 = Label(main_frame, text="Hourly Wage", fg="white", bg="#091F92")
+row1.pack(pady=10)
 
-# BUTTONS
+row2 = Label(main_frame, text="Hours per Week", fg="white", bg="#091F92")
+row2.pack(pady=10)
 
-# create a separate frame to hold buttons in a row
-# this keeps layout organised and easy to control
+row3 = Label(main_frame, text="Number of Weeks", fg="white", bg="#091F92")
+row3.pack(pady=10)
 
-button_frame = Frame(main_frame, bg="#091F92")
-button_frame.pack(pady=20)
-
-# Define a reusable style dictionary for all buttons
-# This ensures consistent appearance and avoids repeating code
-
-btn_style = {
-   "font": ("Arial", 11, "bold"),
-   "bg": "#6d28d9",
-   "fg": "white",
-   "width": 18,
-   "height": 2,
-   "bd": 0
-}
-
-#income calculator button
-
-income_btn = Button(button_frame, text="Income Calculator", **btn_style)
-income_btn.pack(side="left", padx=10)
-
-#savings calculator button
-
-savings_btn = Button(button_frame, text="Savings Calculator", **btn_style)
-savings_btn.pack(side="left", padx=10)
-
-#loan calculator button
-
-loan_btn = Button(button_frame, text="Loan Calculator", **btn_style)
-loan_btn.pack(side="left", padx=10)
-
-#run the completed application
+# Result placeholder
+result_label = Label(main_frame,
+                     text="Result: ",
+                     font=("Arial", 11, "bold"),
+                     fg="#FFCA28",
+                     bg="#091F92")
+result_label.pack(pady=20)
 
 root.mainloop()
