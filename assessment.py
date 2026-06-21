@@ -1,11 +1,12 @@
-# HOME PAGE - TRIAL 2: ADDING TEXT
+# HOME PAGE - TRIAL 3: ADDING NAVIGATION BUTTONS
 # ============================================================
-# This file builds on Trial 1 by adding the title and subtitles.
-# The goal is to show visual hierarchy: a large yellow title, then
-# smaller white supporting text underneath. Buttons are still not
-# included at this stage because they are added in Trial 3.
-# ============================================================
-
+# This file completes the visual home page by adding the three
+# calculator buttons. The custom canvas_button function is used so
+# every button has the same rounded shape, purple colour, white text,
+# and spacing.
+#
+# In this trial file, the buttons are mainly for the screenshot and
+# visual development. The connected app version links buttons to pages.
 
 import tkinter as tk
 
@@ -105,8 +106,44 @@ def make_canvas():
     return canvas
 
 
-# HOME PAGE - TRIAL 2
-# Adds the title and subtitles from the design.
+# Draws one reusable rounded button style so all buttons remain consistent.
+
+
+def canvas_button(canvas, x, y, w, h, text):
+    """Draws a rounded button shape for the design stage."""
+    tag = f"button_{text}"
+
+
+    rounded_rect(
+        canvas,
+        x,
+        y,
+        x + w,
+        y + h,
+        18,
+        fill=BUTTON_BG,
+        outline=BLACK,
+        width=2,
+        tags=tag
+    )
+
+
+    canvas.create_text(
+        x + w / 2,
+        y + h / 2,
+        text=text,
+        fill=WHITE,
+        font=("Arial", 10, "bold"),
+        tags=tag
+    )
+
+
+    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
+    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
+
+
+# HOME PAGE - TRIAL 3
+# Adds the three horizontal calculator buttons.
 
 
 canvas = make_canvas()
@@ -115,34 +152,21 @@ canvas = make_canvas()
 rounded_rect(canvas, 35, 140, 865, 410, 20, fill=CARD_BG)
 
 
-canvas.create_text(
-    WIDTH / 2,
-    210,
-    text="The Ultimate Financial Toolkit",
-    fill=YELLOW,
-    font=("Arial Black", 31),
-    anchor="center"
-)
+canvas.create_text(WIDTH / 2, 210, text="The Ultimate Financial Toolkit",
+                   fill=YELLOW, font=("Arial Black", 31), anchor="center")
 
 
-canvas.create_text(
-    WIDTH / 2,
-    270,
-    text="Simple financial tools for students",
-    fill=WHITE,
-    font=("Arial", 20, "bold"),
-    anchor="center"
-)
+canvas.create_text(WIDTH / 2, 270, text="Simple financial tools for students",
+                   fill=WHITE, font=("Arial", 20, "bold"), anchor="center")
 
 
-canvas.create_text(
-    WIDTH / 2,
-    305,
-    text="Choose your calculator",
-    fill=WHITE,
-    font=("Arial", 18, "bold"),
-    anchor="center"
-)
+canvas.create_text(WIDTH / 2, 305, text="Choose your calculator",
+                   fill=WHITE, font=("Arial", 18, "bold"), anchor="center")
+
+
+canvas_button(canvas, 85, 340, 230, 42, "Income Calculator")
+canvas_button(canvas, 335, 340, 230, 42, "Savings Calculator")
+canvas_button(canvas, 585, 340, 230, 42, "Loans Calculator")
 
 
 root.mainloop()
