@@ -1,14 +1,9 @@
-# HOME PAGE - TRIAL 1: BASIC LAYOUT ONLY
+# HOME PAGE - TRIAL 2: ADDING TEXT
 # ============================================================
-# This is for the first screenshot of Component 1.
-# It only shows the main window, the dark background, and the
-# rounded central card/container from the design. Text and buttons
-# are intentionally not included yet because they are added in
-# later trials.
-#
-# Canvas is used instead of a normal Frame because Canvas lets me
-# draw smoother rounded shapes, which matches my Canva design better
-# while still staying inside normal Tkinter.
+# This file builds on Trial 1 by adding the title and subtitles.
+# The goal is to show visual hierarchy: a large yellow title, then
+# smaller white supporting text underneath. Buttons are still not
+# included at this stage because they are added in Trial 3.
 # ============================================================
 
 
@@ -110,8 +105,8 @@ def make_canvas():
     return canvas
 
 
-# HOME PAGE - TRIAL 1
-# Basic layout only: background and centred rounded card.
+# HOME PAGE - TRIAL 2
+# Adds the title and subtitles from the design.
 
 
 canvas = make_canvas()
@@ -120,6 +115,34 @@ canvas = make_canvas()
 rounded_rect(canvas, 35, 140, 865, 410, 20, fill=CARD_BG)
 
 
+canvas.create_text(
+    WIDTH / 2,
+    210,
+    text="The Ultimate Financial Toolkit",
+    fill=YELLOW,
+    font=("Arial Black", 31),
+    anchor="center"
+)
+
+
+canvas.create_text(
+    WIDTH / 2,
+    270,
+    text="Simple financial tools for students",
+    fill=WHITE,
+    font=("Arial", 20, "bold"),
+    anchor="center"
+)
+
+
+canvas.create_text(
+    WIDTH / 2,
+    305,
+    text="Choose your calculator",
+    fill=WHITE,
+    font=("Arial", 18, "bold"),
+    anchor="center"
+)
+
+
 root.mainloop()
-
-
