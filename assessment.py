@@ -1,19 +1,17 @@
-# INCOME TAX CALCULATOR - TRIAL 2: INPUTS AND BUTTONS
+# INCOME TAX CALCULATOR - TRIAL 3: LOGIC AND FUNCTIONALITY
 # ============================================================
-# This file adds Entry widgets and navigation buttons to the layout.
-# Entry widgets are normal Tkinter input boxes, but they are placed
-# onto the Canvas using create_window() so the page can keep the
-# Canvas-based design while still accepting user input.
-# ============================================================
+# This file adds the working income calculation. It uses hourly wage,
+# hours worked per week, and time period in weeks to calculate gross
+# income, progressive tax, ACC levy, and final take-home pay.
 
+# The result updates automatically when the user types, which is why
+# the Entry boxes are connected to update_income_result with KeyRelease.
 
 import tkinter as tk
-
 
 # Fixed window size so screenshots stay consistent on school computers.
 WIDTH = 900
 HEIGHT = 600
-
 
 # Colour constants for the interface. Using constants avoids repeating hex codes everywhere.
 ROOT_BG = "#241b4a"
@@ -23,7 +21,6 @@ WHITE = "#ffffff"
 YELLOW = "#ffe83d"
 BLACK = "#000000"
 ENTRY_BG = "#d9d9d9"
-
 
 # Create the one main Tkinter window for this trial.
 root = tk.Tk()
@@ -169,9 +166,37 @@ def make_entry(canvas, x, y, width=120):
     return entry
 
 
-# INCOME TAX PAGE - TRIAL 2
-# Adds input boxes and bottom navigation buttons.
+# INCOME TAX PAGE - TRIAL 3
+# Adds progressive tax, ACC levy and automatic result updating.
 
+ACC_LEVY = 0.0175
+
+TAX_BRACKETS = [
+    (14000, 0.105),
+    (48000, 0.175),
+    (70000, 0.30),
+    (180000, 0.33),
+    (float("inf"), 0.39)
+]
+# Calculates progressive tax separately from the interface code.
+
+def progressive_tax(amount):
+    """Calculate tax by filling each bracket before moving to the next."""
+    tax = 0
+    previous_limit = 0
+
+    for limit, rate in TAX_BRACKETS:
+        taxable_amount = min(amount, limit) - previous_limit
+
+        if taxable_amount > 0:
+            tax += taxable_amount * rate
+
+        if amount <= limit:
+            break
+
+        previous_limit = limit
+
+    return tax
 
 canvas = make_canvas()
 
@@ -205,8 +230,61 @@ weeks_entry = make_entry(canvas, 245, 265)
 canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
 
 
-canvas.create_text(60, 360, text="Result: In X weeks, you will take home $000",
-                   fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+result_text = canvas.create_text(
+    60,
+    360,
+    text="Result: In X weeks, you will take home $000",
+    fill=WHITE,
+    font=("Arial", 15, "bold"),
+    anchor="w"
+)
+
+
+
+
+# Updates the result whenever the user types into one of the input boxes.
+
+
+
+
+def update_income_result(event=None):
+    try:
+        wage = float(wage_entry.get())
+        hours = float(hours_entry.get())
+        weeks = float(weeks_entry.get())
+
+
+        if wage < 0 or hours < 0 or weeks < 0:
+            raise ValueError
+
+
+        gross_income = wage * hours * weeks
+        tax = progressive_tax(gross_income)
+        acc = gross_income * ACC_LEVY
+        take_home = gross_income - tax - acc
+
+
+        if weeks.is_integer():
+            weeks_display = str(int(weeks))
+        else:
+            weeks_display = f"{weeks:g}"
+
+
+        canvas.itemconfig(
+            result_text,
+            text=f"Result: In {weeks_display} weeks, you will take home ${take_home:.2f}"
+        )
+
+
+    except ValueError:
+        canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+
+
+wage_entry.bind("<KeyRelease>", update_income_result)
+hours_entry.bind("<KeyRelease>", update_income_result)
+weeks_entry.bind("<KeyRelease>", update_income_result)
 
 
 canvas_button(canvas, 70, 485, 230, 45, "Home")
