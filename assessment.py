@@ -1,12 +1,10 @@
-# HOME PAGE - TRIAL 3: ADDING NAVIGATION BUTTONS
+# INCOME TAX CALCULATOR - TRIAL 1: LAYOUT AND TEXT
 # ============================================================
-# This file completes the visual home page by adding the three
-# calculator buttons. The custom canvas_button function is used so
-# every button has the same rounded shape, purple colour, white text,
-# and spacing.
-#
-# In this trial file, the buttons are mainly for the screenshot and
-# visual development. The connected app version links buttons to pages.
+# This file creates the first visual stage of the Income Tax page.
+# It shows the card, page title, input labels, divider lines, and
+# result placeholder. It does not include working Entry boxes yet.
+# ============================================================
+
 
 import tkinter as tk
 
@@ -106,67 +104,47 @@ def make_canvas():
     return canvas
 
 
-# Draws one reusable rounded button style so all buttons remain consistent.
-
-
-def canvas_button(canvas, x, y, w, h, text):
-    """Draws a rounded button shape for the design stage."""
-    tag = f"button_{text}"
-
-
-    rounded_rect(
-        canvas,
-        x,
-        y,
-        x + w,
-        y + h,
-        18,
-        fill=BUTTON_BG,
-        outline=BLACK,
-        width=2,
-        tags=tag
-    )
-
-
-    canvas.create_text(
-        x + w / 2,
-        y + h / 2,
-        text=text,
-        fill=WHITE,
-        font=("Arial", 10, "bold"),
-        tags=tag
-    )
-
-
-    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
-    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
-
-
-# HOME PAGE - TRIAL 3
-# Adds the three horizontal calculator buttons.
+# INCOME TAX PAGE - TRIAL 1
+# Layout and text only. No entries or working logic yet.
 
 
 canvas = make_canvas()
 
 
-rounded_rect(canvas, 35, 140, 865, 410, 20, fill=CARD_BG)
+rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
 
 
-canvas.create_text(WIDTH / 2, 210, text="The Ultimate Financial Toolkit",
-                   fill=YELLOW, font=("Arial Black", 31), anchor="center")
+canvas.create_text(
+    60,
+    115,
+    text="Income Tax Calculator",
+    fill=WHITE,
+    font=("Arial Black", 26),
+    anchor="w"
+)
 
 
-canvas.create_text(WIDTH / 2, 270, text="Simple financial tools for students",
-                   fill=WHITE, font=("Arial", 20, "bold"), anchor="center")
+rounded_rect(canvas, 745, 92, 855, 134, 18, fill=BUTTON_BG, outline=BLACK, width=2)
+canvas.create_text(800, 113, text="Help", fill=WHITE, font=("Arial", 10, "bold"))
 
 
-canvas.create_text(WIDTH / 2, 305, text="Choose your calculator",
-                   fill=WHITE, font=("Arial", 18, "bold"), anchor="center")
+canvas.create_text(105, 205, text="Hourly Wage", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+canvas.create_text(465, 205, text="Hours worked per week", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
 
 
-canvas_button(canvas, 85, 340, 230, 42, "Income Calculator")
-canvas_button(canvas, 335, 340, 230, 42, "Savings Calculator")
-canvas_button(canvas, 585, 340, 230, 42, "Loans Calculator")
+canvas.create_text(45, 275, text="Time Period (Weeks)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
+
+
+canvas.create_text(
+    60,
+    360,
+    text="Result: In X weeks, you will take home $000",
+    fill=WHITE,
+    font=("Arial", 15, "bold"),
+    anchor="w"
+)
 
 
 root.mainloop()
