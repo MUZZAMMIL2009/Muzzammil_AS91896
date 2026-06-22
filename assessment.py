@@ -1,8 +1,9 @@
-# INCOME TAX CALCULATOR - TRIAL 1: LAYOUT AND TEXT
+# INCOME TAX CALCULATOR - TRIAL 2: INPUTS AND BUTTONS
 # ============================================================
-# This file creates the first visual stage of the Income Tax page.
-# It shows the card, page title, input labels, divider lines, and
-# result placeholder. It does not include working Entry boxes yet.
+# This file adds Entry widgets and navigation buttons to the layout.
+# Entry widgets are normal Tkinter input boxes, but they are placed
+# onto the Canvas using create_window() so the page can keep the
+# Canvas-based design while still accepting user input.
 # ============================================================
 
 
@@ -104,8 +105,72 @@ def make_canvas():
     return canvas
 
 
-# INCOME TAX PAGE - TRIAL 1
-# Layout and text only. No entries or working logic yet.
+# Draws one reusable rounded button style so all buttons remain consistent.
+
+
+def canvas_button(canvas, x, y, w, h, text):
+    """Draws a rounded button shape for the design stage."""
+    tag = f"button_{text}"
+
+
+    rounded_rect(
+        canvas,
+        x,
+        y,
+        x + w,
+        y + h,
+        18,
+        fill=BUTTON_BG,
+        outline=BLACK,
+        width=2,
+        tags=tag
+    )
+
+
+    canvas.create_text(
+        x + w / 2,
+        y + h / 2,
+        text=text,
+        fill=WHITE,
+        font=("Arial", 10, "bold"),
+        tags=tag
+    )
+
+
+    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
+    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
+
+
+# Places a real Entry input box onto the Canvas at exact coordinates.
+
+
+def make_entry(canvas, x, y, width=120):
+    """Create an entry box and place it exactly on the canvas."""
+    entry = tk.Entry(
+        canvas,
+        bg=ENTRY_BG,
+        fg=BLACK,
+        font=("Arial", 11),
+        bd=2,
+        relief="sunken"
+    )
+
+
+    canvas.create_window(
+        x,
+        y,
+        window=entry,
+        width=width,
+        height=24,
+        anchor="nw"
+    )
+
+
+    return entry
+
+
+# INCOME TAX PAGE - TRIAL 2
+# Adds input boxes and bottom navigation buttons.
 
 
 canvas = make_canvas()
@@ -114,14 +179,8 @@ canvas = make_canvas()
 rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
 
 
-canvas.create_text(
-    60,
-    115,
-    text="Income Tax Calculator",
-    fill=WHITE,
-    font=("Arial Black", 26),
-    anchor="w"
-)
+canvas.create_text(60, 115, text="Income Tax Calculator",
+                   fill=WHITE, font=("Arial Black", 26), anchor="w")
 
 
 rounded_rect(canvas, 745, 92, 855, 134, 18, fill=BUTTON_BG, outline=BLACK, width=2)
@@ -129,22 +188,30 @@ canvas.create_text(800, 113, text="Help", fill=WHITE, font=("Arial", 10, "bold")
 
 
 canvas.create_text(105, 205, text="Hourly Wage", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+wage_entry = make_entry(canvas, 245, 195)
+
+
 canvas.create_text(465, 205, text="Hours worked per week", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+hours_entry = make_entry(canvas, 720, 195)
+
+
 canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
 
 
 canvas.create_text(45, 275, text="Time Period (Weeks)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+weeks_entry = make_entry(canvas, 245, 265)
+
+
 canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
 
 
-canvas.create_text(
-    60,
-    360,
-    text="Result: In X weeks, you will take home $000",
-    fill=WHITE,
-    font=("Arial", 15, "bold"),
-    anchor="w"
-)
+canvas.create_text(60, 360, text="Result: In X weeks, you will take home $000",
+                   fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+
+
+canvas_button(canvas, 70, 485, 230, 45, "Home")
+canvas_button(canvas, 340, 485, 230, 45, "Savings Calculator")
+canvas_button(canvas, 610, 485, 230, 45, "Loans Calculator")
 
 
 root.mainloop()
