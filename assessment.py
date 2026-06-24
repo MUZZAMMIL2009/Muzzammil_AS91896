@@ -1,19 +1,19 @@
-# INCOME TAX CALCULATOR - TRIAL 3: LOGIC AND FUNCTIONALITY
-# ============================================================
-# This file adds the working income calculation. It uses hourly wage,
-# hours worked per week, and time period in weeks to calculate gross
-# income, progressive tax, ACC levy, and final take-home pay.
+# SAVINGS RETURN CALCULATOR - TRIAL 1: LAYOUT AND TEXT
+# This first trial creates the visual structure of the Savings page.
+# It includes the card, title, labels, divider lines, Help button,
+# and result placeholder. Entry boxes and bottom buttons are added later.
 
-# The result updates automatically when the user types, which is why
-# the Entry boxes are connected to update_income_result with KeyRelease.
 
 import tkinter as tk
+
 
 # Fixed window size so screenshots stay consistent on school computers.
 WIDTH = 900
 HEIGHT = 600
 
-# Colour constants for the interface. Using constants avoids repeating hex codes everywhere.
+
+# Same colour constants used in the Home and Income pages.
+# Keeping them together makes the page consistent and easier to edit.
 ROOT_BG = "#241b4a"
 CARD_BG = "#2821a3"
 BUTTON_BG = "#6d20f6"
@@ -21,6 +21,7 @@ WHITE = "#ffffff"
 YELLOW = "#ffe83d"
 BLACK = "#000000"
 ENTRY_BG = "#d9d9d9"
+
 
 # Create the one main Tkinter window for this trial.
 root = tk.Tk()
@@ -40,17 +41,12 @@ root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
 
 
 
-# Draws rounded rectangles for cards/buttons, because default Tkinter widgets are too square.
-
-
-
-
 def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, tags=None):
     """Draw a rounded rectangle using a smooth Canvas polygon.
 
 
-    I am using this because normal Tkinter Frames and Buttons are too square,
-    while my design uses rounded purple cards and buttons.
+    Normal Tkinter Frames and Buttons are very square. This function
+    lets me create the rounded card and rounded buttons from my design.
     """
     if outline is None:
         outline = fill
@@ -84,11 +80,6 @@ def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, ta
 
 
 
-# Creates the Canvas, which works like the drawing surface for the page.
-
-
-
-
 def make_canvas():
     """Create the main drawing area for the current page."""
     canvas = tk.Canvas(
@@ -102,194 +93,61 @@ def make_canvas():
     return canvas
 
 
-# Draws one reusable rounded button style so all buttons remain consistent.
-
-
-def canvas_button(canvas, x, y, w, h, text):
-    """Draws a rounded button shape for the design stage."""
-    tag = f"button_{text}"
-
-
-    rounded_rect(
-        canvas,
-        x,
-        y,
-        x + w,
-        y + h,
-        18,
-        fill=BUTTON_BG,
-        outline=BLACK,
-        width=2,
-        tags=tag
-    )
-
-
-    canvas.create_text(
-        x + w / 2,
-        y + h / 2,
-        text=text,
-        fill=WHITE,
-        font=("Arial", 10, "bold"),
-        tags=tag
-    )
-
-
-    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
-    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
-
-
-# Places a real Entry input box onto the Canvas at exact coordinates.
-
-
-def make_entry(canvas, x, y, width=120):
-    """Create an entry box and place it exactly on the canvas."""
-    entry = tk.Entry(
-        canvas,
-        bg=ENTRY_BG,
-        fg=BLACK,
-        font=("Arial", 11),
-        bd=2,
-        relief="sunken"
-    )
-
-
-    canvas.create_window(
-        x,
-        y,
-        window=entry,
-        width=width,
-        height=24,
-        anchor="nw"
-    )
-
-
-    return entry
-
-
-# INCOME TAX PAGE - TRIAL 3
-# Adds progressive tax, ACC levy and automatic result updating.
-
-ACC_LEVY = 0.0175
-
-TAX_BRACKETS = [
-    (14000, 0.105),
-    (48000, 0.175),
-    (70000, 0.30),
-    (180000, 0.33),
-    (float("inf"), 0.39)
-]
-# Calculates progressive tax separately from the interface code.
-
-def progressive_tax(amount):
-    """Calculate tax by filling each bracket before moving to the next."""
-    tax = 0
-    previous_limit = 0
-
-    for limit, rate in TAX_BRACKETS:
-        taxable_amount = min(amount, limit) - previous_limit
-
-        if taxable_amount > 0:
-            tax += taxable_amount * rate
-
-        if amount <= limit:
-            break
-
-        previous_limit = limit
-
-    return tax
-
 canvas = make_canvas()
 
 
+# Main calculator card.
 rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
 
 
-canvas.create_text(60, 115, text="Income Tax Calculator",
-                   fill=WHITE, font=("Arial Black", 26), anchor="w")
-
-
-rounded_rect(canvas, 745, 92, 855, 134, 18, fill=BUTTON_BG, outline=BLACK, width=2)
-canvas.create_text(800, 113, text="Help", fill=WHITE, font=("Arial", 10, "bold"))
-
-
-canvas.create_text(105, 205, text="Hourly Wage", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-wage_entry = make_entry(canvas, 245, 195)
-
-
-canvas.create_text(465, 205, text="Hours worked per week", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-hours_entry = make_entry(canvas, 720, 195)
-
-
-canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
-
-
-canvas.create_text(45, 275, text="Time Period (Weeks)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-weeks_entry = make_entry(canvas, 245, 265)
-
-
-canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
-
-
-result_text = canvas.create_text(
+# Page title: same font family/weight as the Income page.
+canvas.create_text(
     60,
-    360,
-    text="Result: In X weeks, you will take home $000",
+    115,
+    text="Savings Return Calculator",
     fill=WHITE,
-    font=("Arial", 15, "bold"),
+    font=("Arial Black", 26),
     anchor="w"
 )
 
 
+# Help button at top right, matching the Income page.
+rounded_rect(canvas, 745, 92, 855, 134, 18, fill=BUTTON_BG, outline=BLACK, width=2)
+canvas.create_text(800, 113, text="Help", fill=WHITE, font=("Arial", 10, "bold"))
 
 
-# Updates the result whenever the user types into one of the input boxes.
+# First input row.
+canvas.create_text(65, 195, text="Initial Investment", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
+canvas.create_text(575, 195, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
-def update_income_result(event=None):
-    try:
-        wage = float(wage_entry.get())
-        hours = float(hours_entry.get())
-        weeks = float(weeks_entry.get())
+canvas.create_line(25, 235, 875, 235, fill=WHITE, width=2)
 
 
-        if wage < 0 or hours < 0 or weeks < 0:
-            raise ValueError
+# Second input row.
+canvas.create_text(115, 265, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
-        gross_income = wage * hours * weeks
-        tax = progressive_tax(gross_income)
-        acc = gross_income * ACC_LEVY
-        take_home = gross_income - tax - acc
+canvas.create_text(445, 265, text="Compound Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
-        if weeks.is_integer():
-            weeks_display = str(int(weeks))
-        else:
-            weeks_display = f"{weeks:g}"
+canvas.create_line(25, 305, 875, 305, fill=WHITE, width=2)
 
 
-        canvas.itemconfig(
-            result_text,
-            text=f"Result: In {weeks_display} weeks, you will take home ${take_home:.2f}"
-        )
+# Third input row.
+canvas.create_text(95, 335, text="Interest Range", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
-    except ValueError:
-        canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+canvas.create_text(455, 335, text="Monthly Contribution", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
 
 
+canvas.create_line(25, 375, 875, 375, fill=WHITE, width=2)
 
 
-wage_entry.bind("<KeyRelease>", update_income_result)
-hours_entry.bind("<KeyRelease>", update_income_result)
-weeks_entry.bind("<KeyRelease>", update_income_result)
-
-
-canvas_button(canvas, 70, 485, 230, 45, "Home")
-canvas_button(canvas, 340, 485, 230, 45, "Savings Calculator")
-canvas_button(canvas, 610, 485, 230, 45, "Loans Calculator")
+# Result placeholder, same wording as the design.
+canvas.create_text(60, 415, text="Result: Your Return on investment would be $000", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
 
 
 root.mainloop()
