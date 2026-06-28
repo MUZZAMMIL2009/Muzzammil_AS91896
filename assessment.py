@@ -1,8 +1,8 @@
-# LOAN REPAYMENT CALCULATOR - TRIAL 1: LAYOUT AND TEXT
+# LOAN REPAYMENT CALCULATOR - TRIAL 2: INPUTS AND BUTTONS
 # ============================================================
-# This first trial creates the visual structure of the Loan page.
-# It includes the card, title, input labels, divider lines, Help button,
-# and result placeholder. Entry boxes and bottom buttons are added later.
+# This second trial adds Entry boxes and navigation buttons.
+# The calculation is not added yet; this stage is about completing
+# the calculator interface and matching the design.
 
 
 import tkinter as tk
@@ -88,6 +88,64 @@ def make_canvas():
     return canvas
 
 
+def canvas_button(canvas, x, y, w, h, text):
+    """Draw one reusable rounded navigation button."""
+    tag = f"button_{text}"
+
+
+    rounded_rect(
+        canvas,
+        x,
+        y,
+        x + w,
+        y + h,
+        18,
+        fill=BUTTON_BG,
+        outline=BLACK,
+        width=2,
+        tags=tag
+    )
+
+
+    canvas.create_text(
+        x + w / 2,
+        y + h / 2,
+        text=text,
+        fill=WHITE,
+        font=("Arial", 10, "bold"),
+        tags=tag
+    )
+
+
+    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
+    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
+
+
+def make_entry(canvas, x, y, width=120):
+    """Create a grey Entry box and place it exactly on the Canvas."""
+    entry = tk.Entry(
+        canvas,
+        bg=ENTRY_BG,
+        fg=BLACK,
+        font=("Arial", 11),
+        bd=2,
+        relief="sunken"
+    )
+
+
+    canvas.create_window(
+        x,
+        y,
+        window=entry,
+        width=width,
+        height=24,
+        anchor="nw"
+    )
+
+
+    return entry
+
+
 canvas = make_canvas()
 
 
@@ -109,32 +167,33 @@ canvas.create_text(800, 113, text="Help", fill=WHITE, font=("Arial", 10, "bold")
 
 
 canvas.create_text(65, 205, text="Amount Borrowed", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-
-
+amount_entry = make_entry(canvas, 250, 195)
 
 
 canvas.create_text(575, 205, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-
-
+rate_entry = make_entry(canvas, 720, 195)
 
 
 canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
 
 
 canvas.create_text(115, 275, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-
-
+time_entry = make_entry(canvas, 250, 265)
 
 
 canvas.create_text(480, 275, text="Repayment Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
-
-
+frequency_entry = make_entry(canvas, 720, 265)
 
 
 canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
 
 
 canvas.create_text(60, 360, text="Result: You pay back $000 every X time period", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+
+
+canvas_button(canvas, 70, 485, 230, 45, "Home")
+canvas_button(canvas, 340, 485, 230, 45, "Income Calculator")
+canvas_button(canvas, 610, 485, 230, 45, "Savings Calculator")
 
 
 root.mainloop()
