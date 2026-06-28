@@ -1,8 +1,12 @@
-# LOAN REPAYMENT CALCULATOR - TRIAL 2: INPUTS AND BUTTONS
+# LOAN REPAYMENT CALCULATOR - TRIAL 3: LOGIC AND FUNCTIONALITY
 # ============================================================
-# This second trial adds Entry boxes and navigation buttons.
-# The calculation is not added yet; this stage is about completing
-# the calculator interface and matching the design.
+# This final trial adds the working loan repayment calculation.
+# It uses amount borrowed, interest rate, time period, and repayment
+# frequency to calculate the payment required each repayment period.
+#
+# The result updates automatically when the user types, which is why
+# the Entry boxes are connected to update_loan_result with KeyRelease.
+# ============================================================
 
 
 import tkinter as tk
@@ -146,6 +150,57 @@ def make_entry(canvas, x, y, width=120):
     return entry
 
 
+def repayment_label(frequency):
+    """Return a simple word for common repayment frequencies."""
+    if frequency == 52:
+        return "week"
+    elif frequency == 26:
+        return "fortnight"
+    elif frequency == 12:
+        return "month"
+    elif frequency == 4:
+        return "quarter"
+    elif frequency == 2:
+        return "six months"
+    elif frequency == 1:
+        return "year"
+    else:
+        return "repayment period"
+
+
+
+
+def calculate_payment(principal, annual_rate, years, repayments_per_year):
+    """Calculate the repayment each period using the standard loan formula."""
+    total_payments = years * repayments_per_year
+
+
+    if total_payments <= 0:
+        raise ValueError
+
+
+    if annual_rate == 0:
+        return principal / total_payments
+
+
+    periodic_rate = (annual_rate / 100) / repayments_per_year
+
+
+    payment = (
+        principal
+        * periodic_rate
+        * (1 + periodic_rate) ** total_payments
+        / ((1 + periodic_rate) ** total_payments - 1)
+    )
+
+
+    return payment
+
+
+
+
+
+
 canvas = make_canvas()
 
 
@@ -188,7 +243,42 @@ frequency_entry = make_entry(canvas, 720, 265)
 canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
 
 
-canvas.create_text(60, 360, text="Result: You pay back $000 every X time period", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+result_text = canvas.create_text(60, 360, text="Result: You pay back $000 every X time period", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+
+
+def update_loan_result(event=None):
+    """Read the Entry boxes, calculate repayment amount, and update the result."""
+    try:
+        amount = float(amount_entry.get())
+        rate = float(rate_entry.get())
+        years = float(time_entry.get())
+        frequency = float(frequency_entry.get())
+
+
+        if amount <= 0 or rate < 0 or years <= 0 or frequency <= 0:
+            raise ValueError
+
+
+        payment = calculate_payment(amount, rate, years, frequency)
+        frequency_display = repayment_label(frequency)
+
+
+        canvas.itemconfig(
+            result_text,
+            text=f"Result: You pay back ${payment:.2f} every {frequency_display}"
+        )
+
+
+    except ValueError:
+        canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+
+
+amount_entry.bind("<KeyRelease>", update_loan_result)
+rate_entry.bind("<KeyRelease>", update_loan_result)
+time_entry.bind("<KeyRelease>", update_loan_result)
+frequency_entry.bind("<KeyRelease>", update_loan_result)
 
 
 canvas_button(canvas, 70, 485, 230, 45, "Home")
