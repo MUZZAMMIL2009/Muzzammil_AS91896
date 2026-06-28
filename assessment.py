@@ -1,8 +1,11 @@
-# SAVINGS RETURN CALCULATOR - TRIAL 2: INPUTS AND BUTTONS
-# This second trial adds Entry boxes and navigation buttons.
-# The calculation is not added yet; this stage is about making the
-# page look and behave like a proper calculator interface.
-# ============================================================
+# SAVINGS RETURN CALCULATOR - TRIAL 3: LOGIC AND FUNCTIONALITY
+#
+# This final trial adds the working savings calculation.
+# It uses the starting investment, interest rate, time period, compound
+# frequency, optional interest range, and optional monthly contribution.
+#
+# The result updates automatically when the user types, which is why
+# the Entry boxes are connected to update_savings_result with KeyRelease.
 
 
 import tkinter as tk
@@ -162,6 +165,53 @@ def make_entry(canvas, x, y, width=120):
     return entry
 
 
+def calculate_savings(initial, annual_rate, years, compound_frequency, monthly_contribution):
+    """Calculate the future savings value.
+
+
+    The initial investment uses the standard compound interest formula:
+    A = P(1 + r/n)^(nt)
+
+
+    Monthly contributions are added at the end of each month using an
+    equivalent monthly growth rate. This keeps the result realistic
+    while still allowing the user to choose the compounding frequency.
+    """
+    r = annual_rate / 100
+    n = compound_frequency
+    t = years
+
+
+    # Future value of the starting investment.
+    future_initial = initial * (1 + r / n) ** (n * t)
+
+
+    # Number of monthly contributions across the time period.
+    total_months = int(round(t * 12))
+
+
+    if total_months <= 0:
+        return future_initial
+
+
+    # Convert the selected compounding frequency into an equivalent monthly rate.
+    effective_annual_factor = (1 + r / n) ** n
+    monthly_rate = effective_annual_factor ** (1 / 12) - 1
+
+
+    if monthly_rate == 0:
+        future_contributions = monthly_contribution * total_months
+    else:
+        future_contributions = monthly_contribution * (((1 + monthly_rate) ** total_months - 1) / monthly_rate)
+
+
+    return future_initial + future_contributions
+
+
+
+
+
+
 canvas = make_canvas()
 
 
@@ -222,7 +272,71 @@ canvas.create_line(25, 375, 875, 375, fill=WHITE, width=2)
 
 
 # Result placeholder, same wording as the design.
-canvas.create_text(60, 415, text="Result: Your Return on investment would be $000", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+result_text = canvas.create_text(60, 415, text="Result: Your Return on investment would be $000", fill=WHITE, font=("Arial", 15, "bold"), anchor="w")
+
+
+def update_savings_result(event=None):
+    """Read the Entry boxes, calculate the savings return, and update the result."""
+    try:
+        initial = float(initial_entry.get())
+        rate = float(rate_entry.get())
+        years = float(time_entry.get())
+        frequency = float(frequency_entry.get())
+
+
+        # Interest Range and Monthly Contribution are optional.
+        # If the user leaves them blank, the program treats them as zero.
+        interest_range_text = range_entry.get().strip()
+        monthly_text = monthly_entry.get().strip()
+
+
+        interest_range = float(interest_range_text) if interest_range_text != "" else 0
+        monthly = float(monthly_text) if monthly_text != "" else 0
+
+
+        # Negative values do not make sense for this calculator.
+        # Compound frequency must also be above zero to avoid division errors.
+        if initial < 0 or rate < 0 or years < 0 or frequency <= 0 or interest_range < 0 or monthly < 0:
+            raise ValueError
+
+
+        final_amount = calculate_savings(initial, rate, years, frequency, monthly)
+
+
+        if interest_range > 0:
+            # If an interest range is entered, show a low and high estimate as well.
+            low_rate = max(rate - interest_range, 0)
+            high_rate = rate + interest_range
+
+
+            low_amount = calculate_savings(initial, low_rate, years, frequency, monthly)
+            high_amount = calculate_savings(initial, high_rate, years, frequency, monthly)
+
+
+            canvas.itemconfig(
+                result_text,
+                text=f"Result: Your Return on investment would be ${final_amount:.2f} (Range: ${low_amount:.2f} - ${high_amount:.2f})"
+            )
+        else:
+            canvas.itemconfig(
+                result_text,
+                text=f"Result: Your Return on investment would be ${final_amount:.2f}"
+            )
+
+
+    except ValueError:
+        canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+
+
+# Update the result whenever the user changes any input box.
+initial_entry.bind("<KeyRelease>", update_savings_result)
+rate_entry.bind("<KeyRelease>", update_savings_result)
+time_entry.bind("<KeyRelease>", update_savings_result)
+frequency_entry.bind("<KeyRelease>", update_savings_result)
+range_entry.bind("<KeyRelease>", update_savings_result)
+monthly_entry.bind("<KeyRelease>", update_savings_result)
 
 
 # Bottom navigation buttons, positioned the same way as the Income page.
