@@ -1,7 +1,8 @@
-# HELP PAGE - TRIAL 1: BASIC FRAME / CARD
-# This trial only creates the Help page background and main rounded
-# container. Text and buttons are added in later trials.
+# HELP PAGE - TRIAL 2: ADDING TEXT AND SCROLLBAR
 # ============================================================
+# This trial adds the Help page title and scrollable help text.
+# I added a scrollbar because this one Help page explains all three
+# calculators, so the text would not fit neatly without scrolling.
 
 
 import tkinter as tk
@@ -78,7 +79,7 @@ def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, ta
 
 
 def make_canvas():
-    """Create the drawing area for the page."""
+    """Create the main drawing area for the page."""
     canvas = tk.Canvas(
         root,
         width=WIDTH,
@@ -97,6 +98,127 @@ canvas = make_canvas()
 
 # Main rounded card used to hold all Help page content.
 rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
+
+
+# Title for the Help page.
+canvas.create_text(
+    75,
+    105,
+    text="Help - How to use this calculator",
+    fill=WHITE,
+    font=("Arial Black", 24, "bold"),
+    anchor="w"
+)
+
+
+# The help text is kept in one list so I can edit or add sections later.
+# Each section has a heading and paragraph. To add more help text,
+# copy one tuple and change the title/text.
+HELP_SECTIONS = [
+    (
+        "Income Tax Calculator",
+        "Hourly Wage is how much money you earn for one hour of work. "
+        "Hours worked per week is the number of hours you usually work in a week. "
+        "Time Period is the number of weeks you want to calculate for. "
+        "This calculator matters because students often think about gross pay, "
+        "but the amount you actually take home is lower after tax and ACC. "
+        "Understanding take-home pay helps with budgeting, saving, transport costs, "
+        "phone bills, and planning how much work is actually worth."
+    ),
+    (
+        "Savings Return Calculator",
+        "Initial Investment is the amount of money you start with. Interest Rate is "
+        "the yearly percentage return. Time Period is how many years the money is saved "
+        "or invested for. Compound Frequency means how often interest is added: "
+        "1 = yearly, 4 = quarterly, 12 = monthly, 52 = weekly. Monthly Contribution "
+        "is extra money added each month. Interest Range lets you test a lower and higher "
+        "rate. This matters because compound interest can help build wealth over time, "
+        "especially when someone starts young and adds money regularly."
+    ),
+    (
+        "Loan Repayment Calculator",
+        "Amount Borrowed is the total loan amount. Interest Rate is the cost of borrowing "
+        "money, shown as a yearly percentage. Time Period is how many years the loan will "
+        "take to repay. Repayment Frequency means how often payments are made, such as "
+        "12 for monthly or 52 for weekly. This calculator matters because loans can help "
+        "people buy expensive things, but interest makes the total cost higher. Understanding "
+        "repayments helps teenagers avoid debt problems later and make smarter choices."
+    )
+]
+
+
+# Scrollable area inside the central card.
+# The title and bottom buttons stay still while this middle section scrolls.
+scroll_canvas = tk.Canvas(
+    root,
+    width=740,
+    height=300,
+    bg=CARD_BG,
+    highlightthickness=0
+)
+
+
+scrollbar = tk.Scrollbar(
+    root,
+    orient="vertical",
+    command=scroll_canvas.yview
+)
+
+
+scroll_canvas.configure(yscrollcommand=scrollbar.set)
+
+
+# Place the scrolling canvas and scrollbar inside the large purple card.
+canvas.create_window(75, 150, window=scroll_canvas, anchor="nw")
+canvas.create_window(835, 150, window=scrollbar, width=16, height=300, anchor="nw")
+
+
+# Draw the help sections inside the scrollable canvas.
+y = 10
+
+
+for heading, paragraph in HELP_SECTIONS:
+    scroll_canvas.create_text(
+        0,
+        y,
+        text=heading,
+        fill=WHITE,
+        font=("Arial", 17, "bold"),
+        anchor="nw",
+        width=720
+    )
+
+
+    y += 35
+
+
+    scroll_canvas.create_text(
+        0,
+        y,
+        text=paragraph,
+        fill=WHITE,
+        font=("Arial", 11, "bold"),
+        anchor="nw",
+        width=720
+    )
+
+
+    y += 125
+
+
+# Tell Tkinter how far the scrollable area goes.
+scroll_canvas.configure(scrollregion=(0, 0, 740, y))
+
+
+# Allows the mouse wheel to scroll the help text.
+def mouse_scroll(event):
+    scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+
+scroll_canvas.bind("<Enter>", lambda event: scroll_canvas.bind_all("<MouseWheel>", mouse_scroll))
+scroll_canvas.bind("<Leave>", lambda event: scroll_canvas.unbind_all("<MouseWheel>"))
+
+
 
 
 root.mainloop()
