@@ -1,17 +1,14 @@
-# HELP PAGE - TRIAL 2: ADDING TEXT AND SCROLLBAR
+# HELP PAGE - TRIAL 3: ADDING NAVIGATION BUTTONS
 # ============================================================
-# This trial adds the Help page title and scrollable help text.
-# I added a scrollbar because this one Help page explains all three
-# calculators, so the text would not fit neatly without scrolling.
-
+# This trial completes the Help page by adding navigation buttons.
+# The buttons match the same style and layout used in the other pages.
+# ============================================================
 
 import tkinter as tk
-
 
 # Fixed window size so screenshots stay consistent on school computers.
 WIDTH = 900
 HEIGHT = 600
-
 
 # Same colours as the rest of my Financial Toolkit pages.
 ROOT_BG = "#241b4a"
@@ -219,8 +216,55 @@ scroll_canvas.bind("<Enter>", lambda event: scroll_canvas.bind_all("<MouseWheel>
 scroll_canvas.bind("<Leave>", lambda event: scroll_canvas.unbind_all("<MouseWheel>"))
 
 
+def canvas_button(canvas, x, y, w, h, text):
+    """Draw one rounded navigation button.
+
+
+    I reused this button function so the Help page buttons match
+    the same style as the other pages.
+    """
+    tag = f"button_{text}"
+
+
+    rounded_rect(
+        canvas,
+        x,
+        y,
+        x + w,
+        y + h,
+        18,
+        fill=BUTTON_BG,
+        outline=BLACK,
+        width=2,
+        tags=tag
+    )
+
+
+    canvas.create_text(
+        x + w / 2,
+        y + h / 2,
+        text=text,
+        fill=WHITE,
+        font=("Arial", 10, "bold"),
+        tags=tag
+    )
+
+
+    canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
+    canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
+
+
+
+
+# Bottom navigation buttons.
+canvas_button(canvas, 70, 485, 230, 45, "Home")
+canvas_button(canvas, 340, 485, 230, 45, "Income Calculator")
+canvas_button(canvas, 610, 485, 230, 45, "Savings Calculator")
+
+
 
 
 root.mainloop()
+
 
 
