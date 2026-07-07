@@ -384,29 +384,29 @@ def show_savings_page():
     initial_entry = make_entry(canvas, 250, 185)
 
 
-    canvas.create_text(575, 195, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(575, 195, text="Interest Rate(%)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     rate_entry = make_entry(canvas, 720, 185)
 
 
     canvas.create_line(25, 235, 875, 235, fill=WHITE, width=2)
 
 
-    canvas.create_text(115, 265, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(100, 265, text="Time Period(years)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     time_entry = make_entry(canvas, 250, 255)
 
 
-    canvas.create_text(445, 265, text="Compound Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(445, 265, text="Compound Frequency(n/year)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     frequency_entry = make_entry(canvas, 720, 255)
 
 
     canvas.create_line(25, 305, 875, 305, fill=WHITE, width=2)
 
 
-    canvas.create_text(95, 335, text="Interest Range", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(95, 335, text="Interest Range(%)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     range_entry = make_entry(canvas, 250, 325)
 
 
-    canvas.create_text(455, 335, text="Monthly Contribution", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(505, 335, text="Monthly Contribution", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     monthly_entry = make_entry(canvas, 720, 325)
 
 
@@ -508,18 +508,18 @@ def show_loan_page():
     amount_entry = make_entry(canvas, 250, 195)
 
 
-    canvas.create_text(575, 205, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(575, 205, text="Interest Rate(%)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     rate_entry = make_entry(canvas, 720, 195)
 
 
     canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
 
 
-    canvas.create_text(115, 275, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(115, 275, text="Time Period(years)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     time_entry = make_entry(canvas, 250, 265)
 
 
-    canvas.create_text(480, 275, text="Repayment Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    canvas.create_text(480, 275, text="Repayment Frequency(n/year)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
     frequency_entry = make_entry(canvas, 720, 265)
 
 
@@ -595,7 +595,7 @@ def show_help_page():
             "Income Tax Calculator",
             "This calculator helps you work out roughly how much money you actually take home from a job. "
             "Your hourly wage is how much you get paid for one hour of work. Hours worked per week is how many "
-            "hours you usually work each week. Time period means how many weeks you want to calculate for.\n\n"
+            "hours you usually work each week. Time period means how many weeks you want to calculate for."
             "This matters because the amount on your payslip before tax is not the same as the money that lands "
             "in your account. Tax and ACC can take away part of your gross pay, so it is easy to overestimate how "
             "much money you really have. If you are working a part-time job, this calculator can help you plan for "
@@ -607,7 +607,7 @@ def show_help_page():
             "means the money you start with. Interest rate is the yearly percentage return. Time period means how many "
             "years the money is left to grow. Compound frequency means how often interest gets added, such as yearly, "
             "quarterly, monthly, or weekly. Monthly contribution means extra money you add each month. Interest range "
-            "lets you compare different possible returns.\n\n"
+            "lets you compare different possible returns."
             "This matters because saving is not just about leaving money untouched. When interest is added again and "
             "again, your money can start growing on top of previous growth. This is why starting early helps. Even if "
             "you are only saving a small amount from a student job, regular contributions can build up over time. It "
@@ -619,7 +619,7 @@ def show_help_page():
             "This calculator helps you understand what borrowing money could cost you. Amount borrowed is the total "
             "loan amount. Interest rate is the extra percentage charged by the lender. Time period means how many years "
             "you take to pay it back. Repayment frequency means how often you make payments, such as weekly, fortnightly, "
-            "monthly, or yearly.\n\n"
+            "monthly, or yearly."
             "This matters because loans can make expensive things seem affordable at first, but the repayments can stay "
             "with you for a long time. A car loan, student loan, personal loan, or home loan can affect how much money "
             "you have left each week. Interest also means you usually pay back more than you borrowed. This calculator "
