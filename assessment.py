@@ -1,24 +1,39 @@
-# HELP PAGE - TRIAL 3: ADDING NAVIGATION BUTTONS
-# ============================================================
-# This trial completes the Help page by adding navigation buttons.
-# The buttons match the same style and layout used in the other pages.
-# ============================================================
-
 import tkinter as tk
+
+# FINANCIAL TOOLKIT - FINAL CONNECTED SYSTEM
+# This file connects the Home Page, Income Tax Calculator,
+# Savings Return Calculator, Loan Repayment Calculator, and Help Page.
+
+# The visual layout is kept the same as the separate trial pages.
+# The only major change is that the Canvas buttons now take a command,
+# so clicking them opens the correct page.
 
 # Fixed window size so screenshots stay consistent on school computers.
 WIDTH = 900
 HEIGHT = 600
 
-# Same colours as the rest of my Financial Toolkit pages.
+# Colour constants for the interface. Using constants avoids repeating hex codes everywhere.
 ROOT_BG = "#241b4a"
 CARD_BG = "#2821a3"
 BUTTON_BG = "#6d20f6"
 WHITE = "#ffffff"
+YELLOW = "#ffe83d"
 BLACK = "#000000"
+ENTRY_BG = "#d9d9d9"
+
+# Income calculator constants.
+ACC_LEVY = 0.0175
 
 
-# Create the main Tkinter window.
+TAX_BRACKETS = [
+    (14000, 0.105),
+    (48000, 0.175),
+    (70000, 0.30),
+    (180000, 0.33),
+    (float("inf"), 0.39)
+]
+
+# Create the one main Tkinter window for the full connected program.
 root = tk.Tk()
 root.title("Financial Toolkit")
 root.geometry(f"{WIDTH}x{HEIGHT}")
@@ -33,19 +48,19 @@ x = int((screen_width / 2) - (WIDTH / 2))
 y = int((screen_height / 2) - (HEIGHT / 2))
 root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
 
-
+def clear_window():
+    """Clear the current page before drawing the next page."""
+    for widget in root.winfo_children():
+        widget.destroy()
 
 
 def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, tags=None):
-    """Draw a rounded rectangle using Canvas.
+    """Draw a rounded rectangle using a smooth Canvas polygon.
 
-
-    I used this instead of a normal Frame because my design has rounded
-    purple sections, while standard Tkinter frames are very square.
+    This keeps the same rounded purple card and button style from the trial pages.
     """
     if outline is None:
         outline = fill
-
 
     points = [
         x1 + radius, y1,
@@ -62,7 +77,6 @@ def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, ta
         x1, y1
     ]
 
-
     return canvas.create_polygon(
         points,
         smooth=True,
@@ -73,10 +87,8 @@ def rounded_rect(canvas, x1, y1, x2, y2, radius, fill, outline=None, width=1, ta
     )
 
 
-
-
 def make_canvas():
-    """Create the main drawing area for the page."""
+    """Create the main drawing area for the current page."""
     canvas = tk.Canvas(
         root,
         width=WIDTH,
@@ -87,144 +99,17 @@ def make_canvas():
     canvas.pack(fill="both", expand=True)
     return canvas
 
+def canvas_button(canvas, x, y, w, h, text, command=None):
+    """Draw one reusable rounded Canvas button.
 
 
-
-canvas = make_canvas()
-
-
-# Main rounded card used to hold all Help page content.
-rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
-
-
-# Title for the Help page.
-canvas.create_text(
-    75,
-    105,
-    text="Help - How to use this calculator",
-    fill=WHITE,
-    font=("Arial Black", 24, "bold"),
-    anchor="w"
-)
-
-
-# The help text is kept in one list so I can edit or add sections later.
-# Each section has a heading and paragraph. To add more help text,
-# copy one tuple and change the title/text.
-HELP_SECTIONS = [
-    (
-        "Income Tax Calculator",
-        "Hourly Wage is how much money you earn for one hour of work. "
-        "Hours worked per week is the number of hours you usually work in a week. "
-        "Time Period is the number of weeks you want to calculate for. "
-        "This calculator matters because students often think about gross pay, "
-        "but the amount you actually take home is lower after tax and ACC. "
-        "Understanding take-home pay helps with budgeting, saving, transport costs, "
-        "phone bills, and planning how much work is actually worth."
-    ),
-    (
-        "Savings Return Calculator",
-        "Initial Investment is the amount of money you start with. Interest Rate is "
-        "the yearly percentage return. Time Period is how many years the money is saved "
-        "or invested for. Compound Frequency means how often interest is added: "
-        "1 = yearly, 4 = quarterly, 12 = monthly, 52 = weekly. Monthly Contribution "
-        "is extra money added each month. Interest Range lets you test a lower and higher "
-        "rate. This matters because compound interest can help build wealth over time, "
-        "especially when someone starts young and adds money regularly."
-    ),
-    (
-        "Loan Repayment Calculator",
-        "Amount Borrowed is the total loan amount. Interest Rate is the cost of borrowing "
-        "money, shown as a yearly percentage. Time Period is how many years the loan will "
-        "take to repay. Repayment Frequency means how often payments are made, such as "
-        "12 for monthly or 52 for weekly. This calculator matters because loans can help "
-        "people buy expensive things, but interest makes the total cost higher. Understanding "
-        "repayments helps teenagers avoid debt problems later and make smarter choices."
-    )
-]
-
-
-# Scrollable area inside the central card.
-# The title and bottom buttons stay still while this middle section scrolls.
-scroll_canvas = tk.Canvas(
-    root,
-    width=740,
-    height=300,
-    bg=CARD_BG,
-    highlightthickness=0
-)
-
-
-scrollbar = tk.Scrollbar(
-    root,
-    orient="vertical",
-    command=scroll_canvas.yview
-)
-
-
-scroll_canvas.configure(yscrollcommand=scrollbar.set)
-
-
-# Place the scrolling canvas and scrollbar inside the large purple card.
-canvas.create_window(75, 150, window=scroll_canvas, anchor="nw")
-canvas.create_window(835, 150, window=scrollbar, width=16, height=300, anchor="nw")
-
-
-# Draw the help sections inside the scrollable canvas.
-y = 10
-
-
-for heading, paragraph in HELP_SECTIONS:
-    scroll_canvas.create_text(
-        0,
-        y,
-        text=heading,
-        fill=WHITE,
-        font=("Arial", 17, "bold"),
-        anchor="nw",
-        width=720
-    )
-
-
-    y += 35
-
-
-    scroll_canvas.create_text(
-        0,
-        y,
-        text=paragraph,
-        fill=WHITE,
-        font=("Arial", 11, "bold"),
-        anchor="nw",
-        width=720
-    )
-
-
-    y += 125
-
-
-# Tell Tkinter how far the scrollable area goes.
-scroll_canvas.configure(scrollregion=(0, 0, 740, y))
-
-
-# Allows the mouse wheel to scroll the help text.
-def mouse_scroll(event):
-    scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
-
-scroll_canvas.bind("<Enter>", lambda event: scroll_canvas.bind_all("<MouseWheel>", mouse_scroll))
-scroll_canvas.bind("<Leave>", lambda event: scroll_canvas.unbind_all("<MouseWheel>"))
-
-
-def canvas_button(canvas, x, y, w, h, text):
-    """Draw one rounded navigation button.
-
-
-    I reused this button function so the Help page buttons match
-    the same style as the other pages.
+    The trial pages used Canvas shapes for buttons. In the final system,
+    this function keeps the same visual style but also connects the button
+    to a page using command.
     """
-    tag = f"button_{text}"
-
+    # Use only numbers in the tag so spaces in names like "Income Calculator"
+    # do not interfere with Canvas bindings.
+    tag = f"nav_button_{x}_{y}_{w}_{h}"
 
     rounded_rect(
         canvas,
@@ -236,9 +121,8 @@ def canvas_button(canvas, x, y, w, h, text):
         fill=BUTTON_BG,
         outline=BLACK,
         width=2,
-        tags=tag
+        tags=(tag,)
     )
-
 
     canvas.create_text(
         x + w / 2,
@@ -246,25 +130,571 @@ def canvas_button(canvas, x, y, w, h, text):
         text=text,
         fill=WHITE,
         font=("Arial", 10, "bold"),
-        tags=tag
+        tags=(tag,)
     )
-
 
     canvas.tag_bind(tag, "<Enter>", lambda event: canvas.config(cursor="hand2"))
     canvas.tag_bind(tag, "<Leave>", lambda event: canvas.config(cursor=""))
 
+    if command is not None:
+        canvas.tag_bind(tag, "<Button-1>", lambda event, chosen_command=command: chosen_command())
+
+
+def make_entry(canvas, x, y, width=120):
+    """Create a grey Entry box and place it onto the Canvas.
+
+
+    This is copied from the individual calculator pages so the Entry boxes
+    keep the same position, colour, size, font, and anchor point.
+    """
+    entry = tk.Entry(
+        canvas,
+        bg=ENTRY_BG,
+        fg=BLACK,
+        font=("Arial", 11),
+        bd=2,
+        relief="sunken"
+    )
+
+    canvas.create_window(
+        x,
+        y,
+        window=entry,
+        width=width,
+        height=24,
+        anchor="nw"
+    )
+
+    return entry
+
+def progressive_tax(amount):
+    """Calculate tax by filling each bracket before moving to the next."""
+    tax = 0
+    previous_limit = 0
+
+    for limit, rate in TAX_BRACKETS:
+        taxable_amount = min(amount, limit) - previous_limit
+
+        if taxable_amount > 0:
+            tax += taxable_amount * rate
+
+        if amount <= limit:
+            break
+
+        previous_limit = limit
+
+    return tax
+
+def calculate_savings(initial, annual_rate, years, compound_frequency, monthly_contribution):
+    """Calculate the future savings value using compound interest."""
+    r = annual_rate / 100
+    n = compound_frequency
+    t = years
+
+    # Future value of the starting investment.
+    future_initial = initial * (1 + r / n) ** (n * t)
+
+    # Number of monthly contributions across the time period.
+    total_months = int(round(t * 12))
+
+    if total_months <= 0:
+        return future_initial
+
+    # Convert the selected compounding frequency into an equivalent monthly rate.
+    effective_annual_factor = (1 + r / n) ** n
+    monthly_rate = effective_annual_factor ** (1 / 12) - 1
+
+
+    if monthly_rate == 0:
+        future_contributions = monthly_contribution * total_months
+    else:
+        future_contributions = monthly_contribution * (((1 + monthly_rate) ** total_months - 1) / monthly_rate)
+
+    return future_initial + future_contributions
+
+def calculate_payment(principal, annual_rate, years, repayment_frequency):
+    """Calculate the loan repayment amount for each repayment period."""
+    repayments_per_year = repayment_frequency
+    total_payments = years * repayments_per_year
+
+    if total_payments <= 0:
+        raise ValueError
+
+    # If interest is 0%, the loan is split evenly across all repayments.
+    if annual_rate == 0:
+        return principal / total_payments
+
+    periodic_rate = (annual_rate / 100) / repayments_per_year
+
+    payment = principal * (periodic_rate * (1 + periodic_rate) ** total_payments) / (
+        ((1 + periodic_rate) ** total_payments) - 1
+    )
+
+    return payment
+
+
+def repayment_label(frequency):
+    """Convert common repayment frequency numbers into words."""
+    if frequency == 52:
+        return "week"
+    if frequency == 26:
+        return "fortnight"
+    if frequency == 12:
+        return "month"
+    if frequency == 4:
+        return "quarter"
+    if frequency == 2:
+        return "six months"
+    if frequency == 1:
+        return "year"
+    return "repayment period"
+
+
+def draw_help_button(canvas):
+    """Draw the top-right Help button used on calculator pages."""
+    canvas_button(canvas, 745, 92, 110, 42, "Help", show_help_page)
+
+
+def show_home_page():
+    """Display the Home Page."""
+    clear_window()
+    canvas = make_canvas()
+
+    rounded_rect(canvas, 35, 140, 865, 410, 20, fill=CARD_BG)
+
+    canvas.create_text(WIDTH / 2, 210, text="The Ultimate Financial Toolkit",
+                       fill=YELLOW, font=("Arial Black", 31), anchor="center")
+
+    canvas.create_text(WIDTH / 2, 270, text="Simple financial tools for students",
+                       fill=WHITE, font=("Arial", 20, "bold"), anchor="center")
+
+    canvas.create_text(WIDTH / 2, 305, text="Choose your calculator",
+                       fill=WHITE, font=("Arial", 18, "bold"), anchor="center")
+
+    canvas_button(canvas, 85, 340, 230, 42, "Income Calculator", show_income_page)
+    canvas_button(canvas, 335, 340, 230, 42, "Savings Calculator", show_savings_page)
+    canvas_button(canvas, 585, 340, 230, 42, "Loans Calculator", show_loan_page)
+
+def show_income_page():
+    """Display the Income Tax Calculator page."""
+    clear_window()
+    canvas = make_canvas()
+
+    rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
+
+    canvas.create_text(60, 115, text="Income Tax Calculator",
+                       fill=WHITE, font=("Arial Black", 26), anchor="w")
+
+    draw_help_button(canvas)
+
+    canvas.create_text(105, 205, text="Hourly Wage", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    wage_entry = make_entry(canvas, 245, 195)
+
+    canvas.create_text(465, 205, text="Hours worked per week", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    hours_entry = make_entry(canvas, 720, 195)
+
+    canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
+
+
+    canvas.create_text(45, 275, text="Time Period (Weeks)", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    weeks_entry = make_entry(canvas, 245, 265)
+
+
+    canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
+
+
+    result_text = canvas.create_text(
+        60,
+        360,
+        text="Result: In X weeks, you will take home $000",
+        fill=WHITE,
+        font=("Arial", 15, "bold"),
+        anchor="w"
+    )
+
+
+    def update_income_result(event=None):
+        try:
+            wage = float(wage_entry.get())
+            hours = float(hours_entry.get())
+            weeks = float(weeks_entry.get())
+
+
+            if wage < 0 or hours < 0 or weeks < 0:
+                raise ValueError
+
+
+            gross_income = wage * hours * weeks
+            tax = progressive_tax(gross_income)
+            acc = gross_income * ACC_LEVY
+            take_home = gross_income - tax - acc
+
+
+            if weeks.is_integer():
+                weeks_display = str(int(weeks))
+            else:
+                weeks_display = f"{weeks:g}"
+
+
+            canvas.itemconfig(
+                result_text,
+                text=f"Result: In {weeks_display} weeks, you will take home ${take_home:.2f}"
+            )
+
+
+        except ValueError:
+            canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+    wage_entry.bind("<KeyRelease>", update_income_result)
+    hours_entry.bind("<KeyRelease>", update_income_result)
+    weeks_entry.bind("<KeyRelease>", update_income_result)
+
+
+    canvas_button(canvas, 70, 485, 230, 45, "Home", show_home_page)
+    canvas_button(canvas, 340, 485, 230, 45, "Savings Calculator", show_savings_page)
+    canvas_button(canvas, 610, 485, 230, 45, "Loans Calculator", show_loan_page)
 
 
 
-# Bottom navigation buttons.
-canvas_button(canvas, 70, 485, 230, 45, "Home")
-canvas_button(canvas, 340, 485, 230, 45, "Income Calculator")
-canvas_button(canvas, 610, 485, 230, 45, "Savings Calculator")
+
+def show_savings_page():
+    """Display the Savings Return Calculator page."""
+    clear_window()
+    canvas = make_canvas()
 
 
+    rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
 
 
+    canvas.create_text(
+        60,
+        115,
+        text="Savings Return Calculator",
+        fill=WHITE,
+        font=("Arial Black", 26),
+        anchor="w"
+    )
+
+
+    draw_help_button(canvas)
+
+
+    canvas.create_text(65, 195, text="Initial Investment", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    initial_entry = make_entry(canvas, 250, 185)
+
+
+    canvas.create_text(575, 195, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    rate_entry = make_entry(canvas, 720, 185)
+
+
+    canvas.create_line(25, 235, 875, 235, fill=WHITE, width=2)
+
+
+    canvas.create_text(115, 265, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    time_entry = make_entry(canvas, 250, 255)
+
+
+    canvas.create_text(445, 265, text="Compound Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    frequency_entry = make_entry(canvas, 720, 255)
+
+
+    canvas.create_line(25, 305, 875, 305, fill=WHITE, width=2)
+
+
+    canvas.create_text(95, 335, text="Interest Range", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    range_entry = make_entry(canvas, 250, 325)
+
+
+    canvas.create_text(455, 335, text="Monthly Contribution", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    monthly_entry = make_entry(canvas, 720, 325)
+
+
+    canvas.create_line(25, 375, 875, 375, fill=WHITE, width=2)
+
+
+    result_text = canvas.create_text(
+        60,
+        415,
+        text="Result: Your Return on investment would be $000",
+        fill=WHITE,
+        font=("Arial", 15, "bold"),
+        anchor="w"
+    )
+
+
+    def update_savings_result(event=None):
+        """Read the Entry boxes, calculate the savings return, and update the result."""
+        try:
+            initial = float(initial_entry.get())
+            rate = float(rate_entry.get())
+            years = float(time_entry.get())
+            frequency = float(frequency_entry.get())
+
+
+            # Interest Range and Monthly Contribution are optional.
+            interest_range_text = range_entry.get().strip()
+            monthly_text = monthly_entry.get().strip()
+
+
+            interest_range = float(interest_range_text) if interest_range_text != "" else 0
+            monthly = float(monthly_text) if monthly_text != "" else 0
+
+
+            if initial < 0 or rate < 0 or years < 0 or frequency <= 0 or interest_range < 0 or monthly < 0:
+                raise ValueError
+
+
+            final_amount = calculate_savings(initial, rate, years, frequency, monthly)
+
+
+            if interest_range > 0:
+                low_rate = max(rate - interest_range, 0)
+                high_rate = rate + interest_range
+
+
+                low_amount = calculate_savings(initial, low_rate, years, frequency, monthly)
+                high_amount = calculate_savings(initial, high_rate, years, frequency, monthly)
+
+
+                canvas.itemconfig(
+                    result_text,
+                    text=f"Result: Your Return on investment would be ${final_amount:.2f} (Range: ${low_amount:.2f} - ${high_amount:.2f})"
+                )
+            else:
+                canvas.itemconfig(
+                    result_text,
+                    text=f"Result: Your Return on investment would be ${final_amount:.2f}"
+                )
+
+
+        except ValueError:
+            canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+    initial_entry.bind("<KeyRelease>", update_savings_result)
+    rate_entry.bind("<KeyRelease>", update_savings_result)
+    time_entry.bind("<KeyRelease>", update_savings_result)
+    frequency_entry.bind("<KeyRelease>", update_savings_result)
+    range_entry.bind("<KeyRelease>", update_savings_result)
+    monthly_entry.bind("<KeyRelease>", update_savings_result)
+
+
+    canvas_button(canvas, 70, 485, 230, 45, "Home", show_home_page)
+    canvas_button(canvas, 340, 485, 230, 45, "Income Calculator", show_income_page)
+    canvas_button(canvas, 610, 485, 230, 45, "Loans Calculator", show_loan_page)
+
+def show_loan_page():
+    """Display the Loan Repayment Calculator page."""
+    clear_window()
+    canvas = make_canvas()
+
+    rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
+
+    canvas.create_text(
+        60,
+        115,
+        text="Loan Repayment Calculator",
+        fill=WHITE,
+        font=("Arial Black", 26, "bold"),
+        anchor="w"
+    )
+
+
+    draw_help_button(canvas)
+
+
+    canvas.create_text(65, 205, text="Amount Borrowed", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    amount_entry = make_entry(canvas, 250, 195)
+
+
+    canvas.create_text(575, 205, text="Interest Rate", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    rate_entry = make_entry(canvas, 720, 195)
+
+
+    canvas.create_line(25, 245, 875, 245, fill=WHITE, width=2)
+
+
+    canvas.create_text(115, 275, text="Time Period", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    time_entry = make_entry(canvas, 250, 265)
+
+
+    canvas.create_text(480, 275, text="Repayment Frequency", fill=WHITE, font=("Arial", 12, "bold"), anchor="w")
+    frequency_entry = make_entry(canvas, 720, 265)
+
+
+    canvas.create_line(25, 315, 875, 315, fill=WHITE, width=2)
+
+
+    result_text = canvas.create_text(
+        60,
+        360,
+        text="Result: You pay back $000 every X time period",
+        fill=WHITE,
+        font=("Arial", 15, "bold"),
+        anchor="w"
+    )
+
+
+    def update_loan_result(event=None):
+        try:
+            amount = float(amount_entry.get())
+            rate = float(rate_entry.get())
+            years = float(time_entry.get())
+            frequency = float(frequency_entry.get())
+
+
+            if amount <= 0 or rate < 0 or years <= 0 or frequency <= 0:
+                raise ValueError
+
+
+            payment = calculate_payment(amount, rate, years, frequency)
+            label = repayment_label(frequency)
+
+
+            canvas.itemconfig(
+                result_text,
+                text=f"Result: You pay back ${payment:.2f} every {label}"
+            )
+
+
+        except ValueError:
+            canvas.itemconfig(result_text, text="Result: Please enter valid numbers")
+
+
+    amount_entry.bind("<KeyRelease>", update_loan_result)
+    rate_entry.bind("<KeyRelease>", update_loan_result)
+    time_entry.bind("<KeyRelease>", update_loan_result)
+    frequency_entry.bind("<KeyRelease>", update_loan_result)
+
+
+    canvas_button(canvas, 70, 485, 230, 45, "Home", show_home_page)
+    canvas_button(canvas, 340, 485, 230, 45, "Income Calculator", show_income_page)
+    canvas_button(canvas, 610, 485, 230, 45, "Savings Calculator", show_savings_page)
+
+
+def show_help_page():
+    """Display the Help Page."""
+    clear_window()
+    canvas = make_canvas()
+
+    rounded_rect(canvas, 25, 50, 875, 550, 18, fill=CARD_BG)
+
+    canvas.create_text(
+        75,
+        105,
+        text="Help - How to use this calculator",
+        fill=WHITE,
+        font=("Arial Black", 24, "bold"),
+        anchor="w"
+    )
+
+
+    HELP_SECTIONS = [
+        (
+            "Income Tax Calculator",
+            "This calculator helps you work out roughly how much money you actually take home from a job. "
+            "Your hourly wage is how much you get paid for one hour of work. Hours worked per week is how many "
+            "hours you usually work each week. Time period means how many weeks you want to calculate for.\n\n"
+            "This matters because the amount on your payslip before tax is not the same as the money that lands "
+            "in your account. Tax and ACC can take away part of your gross pay, so it is easy to overestimate how "
+            "much money you really have. If you are working a part-time job, this calculator can help you plan for "
+            "things like food, transport, phone bills, saving goals, or spending money without guessing."
+        ),
+        (
+            "Savings Return Calculator",
+            "This calculator shows how your money could grow if you save or invest it over time. Initial investment "
+            "means the money you start with. Interest rate is the yearly percentage return. Time period means how many "
+            "years the money is left to grow. Compound frequency means how often interest gets added, such as yearly, "
+            "quarterly, monthly, or weekly. Monthly contribution means extra money you add each month. Interest range "
+            "lets you compare different possible returns.\n\n"
+            "This matters because saving is not just about leaving money untouched. When interest is added again and "
+            "again, your money can start growing on top of previous growth. This is why starting early helps. Even if "
+            "you are only saving a small amount from a student job, regular contributions can build up over time. It "
+            "can help with goals like buying a car, paying for study, building emergency money, or starting to invest "
+            "instead of spending everything straight away."
+        ),
+        (
+            "Loan Repayment Calculator",
+            "This calculator helps you understand what borrowing money could cost you. Amount borrowed is the total "
+            "loan amount. Interest rate is the extra percentage charged by the lender. Time period means how many years "
+            "you take to pay it back. Repayment frequency means how often you make payments, such as weekly, fortnightly, "
+            "monthly, or yearly.\n\n"
+            "This matters because loans can make expensive things seem affordable at first, but the repayments can stay "
+            "with you for a long time. A car loan, student loan, personal loan, or home loan can affect how much money "
+            "you have left each week. Interest also means you usually pay back more than you borrowed. This calculator "
+            "helps you see the payment before making a decision, so borrowing money feels less like a random number and "
+            "more like a real responsibility."
+        )
+    ]
+
+
+    scroll_canvas = tk.Canvas(
+        root,
+        width=740,
+        height=300,
+        bg=CARD_BG,
+        highlightthickness=0
+    )
+
+
+    scrollbar = tk.Scrollbar(
+        root,
+        orient="vertical",
+        command=scroll_canvas.yview
+    )
+
+
+    scroll_canvas.configure(yscrollcommand=scrollbar.set)
+
+
+    canvas.create_window(75, 150, window=scroll_canvas, anchor="nw")
+    canvas.create_window(835, 150, window=scrollbar, width=16, height=300, anchor="nw")
+
+
+    y_position = 10
+
+
+    for heading, paragraph in HELP_SECTIONS:
+        scroll_canvas.create_text(
+            0,
+            y_position,
+            text=heading,
+            fill=WHITE,
+            font=("Arial", 17, "bold"),
+            anchor="nw",
+            width=720
+        )
+
+
+        y_position += 35
+
+
+        scroll_canvas.create_text(
+            0,
+            y_position,
+            text=paragraph,
+            fill=WHITE,
+            font=("Arial", 11, "bold"),
+            anchor="nw",
+            width=720
+        )
+
+
+        y_position += 180
+
+
+    scroll_canvas.configure(scrollregion=(0, 0, 740, y_position))
+
+    def mouse_scroll(event):
+        scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+    scroll_canvas.bind("<MouseWheel>", mouse_scroll)
+
+    canvas_button(canvas, 70, 485, 230, 45, "Home", show_home_page)
+    canvas_button(canvas, 340, 485, 230, 45, "Income Calculator", show_income_page)
+    canvas_button(canvas, 610, 485, 230, 45, "Savings Calculator", show_savings_page)
+
+# Start the program on the Home Page.
+show_home_page()
 root.mainloop()
-
-
-
